@@ -94,7 +94,7 @@ public class DynamoDBTableReplicator {
 	TableSchema tableSchema;
 
 	public DynamoDBTableReplicator(
-			AmazonDynamoDB dynamoDBClient,
+			AmazonDynamoDB dynamoDBClient, 
 			AmazonDynamoDBStreams streamsClient,
 			AWSCredentialsProvider awsCredentialsProvider,
 			ExecutorService executorService,
@@ -382,6 +382,8 @@ public class DynamoDBTableReplicator {
 			@Override
 			public void processRecords(ProcessRecordsInput processRecordsInput) {
 				List<Record> records = extractDynamoStreamRecords(processRecordsInput.getRecords());
+				
+				LOG.debug("No of records from stream" + records.size() );
 
 				DynamoDBTableReplicator.this.processRecords(records);
 
@@ -559,13 +561,20 @@ public class DynamoDBTableReplicator {
 
 			AttributeValue typedValue = entry.getValue();
 			TableColumnValue columnValue = columnValueFromDynamoValue(typedValue);
+			
+			if(columnName == "lastLoginTime") {
+				LOG.error(column.name + " " + column.type);
+			}
 
 			if( columnValue == null ){
 				row.setValue(columnName, null);
-			}else if (columnValue.type == column.type) {
+			}else if(columnName == "lastLoginTime" && columnValue.toCopyValue().codePointAt(0) != 50) {
+				row.setValue(columnName, null);
+			}
+			else if (columnValue.type == column.type) {
 				row.setValue(columnName, columnValue);
-			} else {
-				row.setValue(columnName + "_" + columnValue.type, columnValue);
+			}else {
+				row.setValue(columnName + "_" + column.type, columnValue);
 			}
 		}
 

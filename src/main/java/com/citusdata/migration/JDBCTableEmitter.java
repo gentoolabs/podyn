@@ -13,6 +13,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
@@ -28,6 +30,8 @@ import com.citusdata.migration.datamodel.TableSchema;
  *
  */
 public class JDBCTableEmitter implements TableEmitter {
+	
+	private static final Log LOG = LogFactory.getLog(JDBCTableEmitter.class);
 
 	final String DESCRIBE_TABLE_SQL = ""
 			+ "SELECT "
