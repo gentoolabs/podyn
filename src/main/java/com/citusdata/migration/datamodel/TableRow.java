@@ -112,8 +112,8 @@ public class TableRow {
 
 			if (value != null) {
 				sb.append(value.toQuotedString());
-				sb.append("::");
-				sb.append(column.type);
+				//sb.append("::");
+				//sb.append(column.type);
 			} else {
 				sb.append("NULL");
 			}
